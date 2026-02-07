@@ -19,7 +19,8 @@ const APIClient = {
         const url = `${this.baseUrl}/${endpoint}`;
         const options = {
             method,
-            headers: this.getHeaders()
+            headers: this.getHeaders(),
+            credentials: 'include' // Important for sessions
         };
         
         if (data && (method === 'POST' || method === 'PUT')) {
@@ -27,8 +28,11 @@ const APIClient = {
         }
         
         try {
+            console.log('[APIClient] Request:', { endpoint, method, url });
             const response = await fetch(url, options);
             const result = await response.json();
+            
+            console.log('[APIClient] Response:', { endpoint, status: response.status, success: result.success });
             
             if (!response.ok && !result.success) {
                 throw new Error(result.error || 'Error en la solicitud');
@@ -36,7 +40,7 @@ const APIClient = {
             
             return result;
         } catch (error) {
-            console.error('[API Error]', error);
+            console.error('[API Error]', { endpoint, error: error.message });
             throw error;
         }
     },

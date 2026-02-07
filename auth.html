@@ -452,44 +452,218 @@
         }
 
         // Login Submit - Con mejora de UserManager
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const userType = document.querySelector('input[name="login-user-type"]:checked').value;
-            const nombre = 'Usuario'; // Demo - Default name
-            const apellido = 'Login';
+            const password = document.getElementById('login-password').value;
+            const idMethod = currentIdMethod['login'] || 'cedula';
             
-            // Usar UserManager para guardar datos de forma consistente
-            UserManager.setUser({
-                type: userType,
-                nombre: nombre,
-                apellido: apellido
-            });
+            let identifier = '';
+            if (idMethod === 'cedula') {
+                identifier = document.getElementById('login-cedula')?.value || '';
+            } else if (idMethod === 'email') {
+                identifier = document.getElementById('login-email')?.value || '';
+            } else if (idMethod === 'telefono') {
+                identifier = document.getElementById('login-telefono')?.value || '';
+            }
             
-            if (userType === 'client') {
-                window.location.href = 'dashboard_cliente.html';
-            } else {
-                window.location.href = 'dashboard_desarrollador.html';
+            if (!identifier || !password) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Iniciando sesión...';
+            
+            try {
+                console.log('[v0] Login attempt with:', { userType, idMethod, identifier });
+                
+                // Build credentials object based on identifier type
+                const credentials = {
+                    type: userType === 'client' ? 'cliente' : 'desarrollador',
+                    password: password
+                };
+                
+                if (idMethod === 'email') {
+                    credentials.email = identifier;
+                } else if (idMethod === 'cedula') {
+                    credentials.cedula = identifier;
+                    // Also try with email if cedula doesn't work
+                    credentials.email = `user_${identifier}@devlink.local`;
+                } else if (idMethod === 'telefono') {
+                    credentials.telefono = identifier;
+                }
+                
+                const response = await fetch('api/auth.php?action=login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
+                
+                const data = await response.json();
+                console.log('[v0] Login response:', data);
+                
+                if (!response.ok || !data.success) {
+                    alert('Error: ' + (data.error || 'Credenciales inválidas'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+                
+                if (data.user) {
+                    // Save user data with UserManager
+                    UserManager.setUser({
+                        id: data.user.id,
+                        type: userType,
+                        nombre: data.user.nombre,
+                        apellido: data.user.apellido,
+                        email: data.user.email
+                    });
+                    
+                    alert('Bienvenido ' + data.user.nombre + '!');
+                    
+                    if (userType === 'client') {
+                        window.location.href = 'dashboard_cliente.html';
+                    } else {
+                        window.location.href = 'dashboard_desarrollador.html';
+                    }
+                } else {
+                    alert('Error: No se recibieron datos del usuario');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('[v0] Login error:', error);
+                alert('Error de conexión: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
         });
         
         // Register Submit - Con mejora de UserManager
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const userType = document.querySelector('input[name="user-type"]:checked').value;
             const nombre = document.getElementById('register-nombre').value;
             const apellido = document.getElementById('register-apellido').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
             
-            // Usar UserManager para guardar datos de forma consistente
-            UserManager.setUser({
-                type: userType,
-                nombre: nombre,
-                apellido: apellido
-            });
+            // Validate form fields
+            if (!nombre || !apellido || !password || !confirmPassword) {
+                alert('Por favor completa todos los campos requeridos');
+                return;
+            }
             
-            if (userType === 'client') {
-                window.location.href = 'dashboard_cliente.html';
-            } else {
-                window.location.href = 'dashboard_desarrollador.html';
+            if (password !== confirmPassword) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('La contraseña debe tener al menos 8 caracteres');
+                return;
+            }
+            
+            // Get identification value based on method
+            let email = '';
+            let cedula = '';
+            let telefono = '';
+            
+            const idMethod = currentIdMethod['register'] || 'cedula';
+            
+            if (idMethod === 'email') {
+                email = document.getElementById('register-email')?.value || '';
+                if (!email) {
+                    alert('Por favor proporciona un email');
+                    return;
+                }
+            } else if (idMethod === 'cedula') {
+                cedula = document.getElementById('register-cedula')?.value || '';
+                if (!cedula) {
+                    alert('Por favor proporciona una cédula');
+                    return;
+                }
+            } else if (idMethod === 'telefono') {
+                telefono = document.getElementById('register-telefono')?.value || '';
+                if (!telefono) {
+                    alert('Por favor proporciona un teléfono');
+                    return;
+                }
+            }
+            
+            // If only cedula was provided, generate a temporary email
+            if (!email && cedula) {
+                email = `user_${cedula}@devlink.local`;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registrando...';
+            
+            try {
+                console.log('[v0] Registering user:', { userType, nombre, apellido, email, cedula, telefono });
+                
+                const response = await fetch('api/auth.php?action=register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: userType === 'client' ? 'cliente' : 'desarrollador',
+                        nombre: nombre,
+                        apellido: apellido,
+                        email: email,
+                        password: password,
+                        cedula: cedula,
+                        telefono: telefono
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('[v0] Registration response:', data);
+                
+                if (!response.ok) {
+                    alert('Error en registro: ' + (data.error || 'Error desconocido'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+                
+                if (data.success) {
+                    // Usar UserManager para guardar datos de forma consistente
+                    UserManager.setUser({
+                        id: data.user_id,
+                        type: userType,
+                        nombre: nombre,
+                        apellido: apellido,
+                        email: email
+                    });
+                    
+                    alert('Registro exitoso! Bienvenido a DevLink');
+                    
+                    if (userType === 'client') {
+                        window.location.href = 'dashboard_cliente.html';
+                    } else {
+                        window.location.href = 'dashboard_desarrollador.html';
+                    }
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo registrar el usuario'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('[v0] Registration error:', error);
+                alert('Error de conexión: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
         });
 

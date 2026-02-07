@@ -26,47 +26,100 @@ const DashboardLoader = {
             let stats = { projects: 0, proposals: 0, contracts: 0, balance: '0' };
             let projects = [];
             
+            console.log('[DashboardLoader] Loading home for user type:', userType);
+            
             if (userType === 'cliente') {
                 // Para clientes: proyectos publicados y propuestas recibidas
                 try {
+                    console.log('[DashboardLoader] Fetching projects...');
                     const projectsData = await APIClient.Projects.list(1, 3);
+                    console.log('[DashboardLoader] Projects data:', projectsData);
                     projects = projectsData.projects || [];
                     stats.projects = projects.length;
                 } catch (e) {
-                    console.log('[DashboardLoader] Projects list error:', e);
+                    console.error('[DashboardLoader] Projects list error:', e.message);
                 }
                 
                 try {
+                    console.log('[DashboardLoader] Fetching proposals...');
                     const proposalsData = await APIClient.Proposals.list(1, 50);
+                    console.log('[DashboardLoader] Proposals data:', proposalsData);
                     stats.proposals = (proposalsData.proposals || []).length;
                 } catch (e) {
-                    console.log('[DashboardLoader] Proposals error:', e);
+                    console.error('[DashboardLoader] Proposals error:', e.message);
                 }
             } else {
                 // Para desarrolladores: propuestas enviadas y contratos
                 try {
+                    console.log('[DashboardLoader] Fetching proposals for developer...');
                     const proposalsData = await APIClient.Proposals.list(1, 50);
+                    console.log('[DashboardLoader] Proposals data:', proposalsData);
                     stats.proposals = (proposalsData.proposals || []).length;
                 } catch (e) {
-                    console.log('[DashboardLoader] Proposals error:', e);
+                    console.error('[DashboardLoader] Proposals error:', e.message);
                 }
                 
                 try {
+                    console.log('[DashboardLoader] Fetching contracts...');
                     const contractsData = await APIClient.Contracts.list(1, 50);
+                    console.log('[DashboardLoader] Contracts data:', contractsData);
                     stats.contracts = (contractsData.contracts || []).length;
                 } catch (e) {
-                    console.log('[DashboardLoader] Contracts error:', e);
+                    console.error('[DashboardLoader] Contracts error:', e.message);
                 }
             }
             
             // Actualizar estadísticas en el DOM
             const statElements = document.querySelectorAll('[id^="stat-"]');
+            console.log('[DashboardLoader] Found stat elements:', statElements.length);
+            
             statElements.forEach(el => {
-                if (el.id === 'stat-projects') el.textContent = stats.projects;
-                if (el.id === 'stat-proposals') el.textContent = stats.proposals;
-                if (el.id === 'stat-contracts') el.textContent = stats.contracts;
-                if (el.id === 'stat-balance') el.textContent = 'REF ' + stats.balance + 'k';
+                if (el.id === 'stat-projects') {
+                    el.textContent = stats.projects;
+                    console.log('[DashboardLoader] Updated stat-projects to:', stats.projects);
+                }
+                if (el.id === 'stat-proposals') {
+                    el.textContent = stats.proposals;
+                    console.log('[DashboardLoader] Updated stat-proposals to:', stats.proposals);
+                }
+                if (el.id === 'stat-contracts') {
+                    el.textContent = stats.contracts;
+                    console.log('[DashboardLoader] Updated stat-contracts to:', stats.contracts);
+                }
+                if (el.id === 'stat-balance') {
+                    el.textContent = 'REF ' + stats.balance + 'k';
+                    console.log('[DashboardLoader] Updated stat-balance to:', stats.balance);
+                }
             });
+            
+            // If no stats found in main page, try to render full UI
+            if (statElements.length === 0) {
+                console.log('[DashboardLoader] No stat elements found, rendering full content');
+                const homeHtml = `
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl font-bold mb-8">Mi Dashboard</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                            <div class="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Proyectos</div>
+                                <div class="text-3xl font-bold">${stats.projects}</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Propuestas</div>
+                                <div class="text-3xl font-bold">${stats.proposals}</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Contratos</div>
+                                <div class="text-3xl font-bold">${stats.contracts}</div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">Saldo</div>
+                                <div class="text-3xl font-bold">${stats.balance}k</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = homeHtml;
+            }
             
             // Renderizar proyectos recientes si existen
             if (projects.length > 0) {
@@ -87,13 +140,14 @@ const DashboardLoader = {
                 
                 const projectsContainer = document.getElementById('recent-projects') || document.getElementById('pending-deliveries');
                 if (projectsContainer) {
+                    console.log('[DashboardLoader] Updating projects container');
                     projectsContainer.innerHTML = recentProjectsHtml;
                 }
             }
             
         } catch (error) {
             console.error('[DashboardLoader] Error en renderHome:', error);
-            container.innerHTML = '<div class="text-center py-12 text-red-500"><p>Error cargando datos del dashboard</p></div>';
+            container.innerHTML = `<div class="text-center py-12 text-red-500"><p>Error cargando datos del dashboard: ${error.message}</p></div>`;
         }
     },
     

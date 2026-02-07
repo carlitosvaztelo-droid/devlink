@@ -49,22 +49,57 @@ function handleLogin($pdo) {
     
     $data = json_decode(file_get_contents('php://input'), true);
     $email = $data['email'] ?? '';
+    $cedula = $data['cedula'] ?? '';
+    $telefono = $data['telefono'] ?? '';
     $password = $data['password'] ?? '';
     $userType = $data['type'] ?? '';
     
-    if (empty($email) || empty($password)) {
+    if (empty($password)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Email y contraseña requeridos']);
+        echo json_encode(['error' => 'Contraseña requerida']);
         return;
     }
     
-    $stmt = $pdo->prepare("
-        SELECT id, tipo, nombre, apellido, email, imagen_perfil, activo
-        FROM usuarios
-        WHERE email = :email AND tipo = :tipo AND activo = 1
-    ");
-    $stmt->execute([':email' => $email, ':tipo' => $userType]);
-    $user = $stmt->fetch();
+    if (empty($email) && empty($cedula) && empty($telefono)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Email, cédula o teléfono requerido']);
+        return;
+    }
+    
+    $user = null;
+    
+    // Try email first if provided
+    if (!empty($email)) {
+        $stmt = $pdo->prepare("
+            SELECT id, tipo, nombre, apellido, email, cedula, telefono, contraseña, imagen_perfil, activo
+            FROM usuarios
+            WHERE email = :email AND tipo = :tipo AND activo = 1
+        ");
+        $stmt->execute([':email' => $email, ':tipo' => $userType]);
+        $user = $stmt->fetch();
+    }
+    
+    // Try cedula if no user found
+    if (!$user && !empty($cedula)) {
+        $stmt = $pdo->prepare("
+            SELECT id, tipo, nombre, apellido, email, cedula, telefono, contraseña, imagen_perfil, activo
+            FROM usuarios
+            WHERE cedula = :cedula AND tipo = :tipo AND activo = 1
+        ");
+        $stmt->execute([':cedula' => $cedula, ':tipo' => $userType]);
+        $user = $stmt->fetch();
+    }
+    
+    // Try telefono if no user found
+    if (!$user && !empty($telefono)) {
+        $stmt = $pdo->prepare("
+            SELECT id, tipo, nombre, apellido, email, cedula, telefono, contraseña, imagen_perfil, activo
+            FROM usuarios
+            WHERE telefono = :telefono AND tipo = :tipo AND activo = 1
+        ");
+        $stmt->execute([':telefono' => $telefono, ':tipo' => $userType]);
+        $user = $stmt->fetch();
+    }
     
     if (!$user || !password_verify($password, $user['contraseña'] ?? '')) {
         http_response_code(401);
