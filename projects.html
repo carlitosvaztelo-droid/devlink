@@ -80,43 +80,23 @@
         </div>
     </main>
 
+    <script src="js/devlink-utils.js"></script>
     <script>
         // Lógica de Usuario y Tema
-        const user = JSON.parse(localStorage.getItem('devlink_demo_user')) || { type: 'dev', nombre: 'Usuario', apellido: 'Demo' };
-        const isClient = user.type === 'client';
+        const user = UserManager.getUser();
+        const isClient = UserManager.isClient();
         
-        // Avatar
-        document.getElementById('user-avatar').textContent = user.nombre[0];
+        document.addEventListener('DOMContentLoaded', function() {
+            // Avatar
+            document.getElementById('user-avatar').textContent = user.nombre[0];
 
-        // Configuración Sidebar
-        const nav = document.getElementById('sidebar-nav');
-        const dashboardUrl = isClient ? 'dashboard_cliente.html' : 'dashboard_desarrollador.html';
-        
-        nav.innerHTML = `
-            <a href="${dashboardUrl}" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <i class="fas fa-th-large w-5"></i><span class="font-medium hidden lg:block">Dashboard</span>
-            </a>
-            <a href="projects.html" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg shadow-primary/30">
-                <i class="fas fa-layer-group w-5"></i><span class="font-medium hidden lg:block">${isClient ? 'Mis Publicaciones' : 'Explorar Proyectos'}</span>
-            </a>
-            <a href="proposals.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <i class="fas fa-file-alt w-5"></i><span class="font-medium hidden lg:block">${isClient ? 'Candidatos' : 'Mis Postulaciones'}</span>
-            </a>
-            <a href="contracts.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <i class="fas fa-file-signature w-5"></i><span class="font-medium hidden lg:block">Contratos</span>
-            </a>
-            <a href="messages.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <i class="fas fa-comment-dots w-5"></i><span class="font-medium hidden lg:block">Mensajes</span>
-            </a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <i class="fas fa-user-circle w-5"></i><span class="font-medium hidden lg:block">Mi Perfil</span>
-            </a>
-        `;
+            // Configuración Sidebar
+            NavigationGenerator.initSidebar('projects');
 
-        // Renderizado Condicional
-        const grid = document.getElementById('projects-grid');
-        const title = document.getElementById('page-title');
-        const subtitle = document.getElementById('page-subtitle');
+            // Renderizado Condicional
+            const grid = document.getElementById('projects-grid');
+            const title = document.getElementById('page-title');
+            const subtitle = document.getElementById('page-subtitle');
 
         if (isClient) {
             title.textContent = "Mis Proyectos Publicados";
@@ -257,7 +237,19 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-        updateTheme();
+            updateTheme();
+        });
+        
+        // Theme functions
+        function updateTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                darkIcon.className = 'fas fa-sun w-5';
+                themeText.textContent = 'Modo Claro';
+            } else {
+                darkIcon.className = 'fas fa-moon w-5';
+                themeText.textContent = 'Modo Oscuro';
+            }
+        }
     </script>
 </body>
 </html>

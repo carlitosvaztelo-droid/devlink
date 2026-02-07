@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -343,35 +343,8 @@
         </div>
     </div>
 
+    <script src="js/devlink-utils.js"></script>
     <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            themeToggleLightIcon.classList.remove('hidden');
-            themeToggleDarkIcon.classList.add('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            themeToggleLightIcon.classList.add('hidden');
-            themeToggleDarkIcon.classList.remove('hidden');
-        }
-        
-        themeToggle.addEventListener('click', function() {
-            themeToggleLightIcon.classList.toggle('hidden');
-            themeToggleDarkIcon.classList.toggle('hidden');
-            
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
-            }
-        });
-        
         // Variables globales
         let currentIdMethod = {
             login: 'cedula',
@@ -478,54 +451,72 @@
             }
         }
 
-        // Demo Submits
+        // Login Submit - Con mejora de UserManager
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const userType = document.querySelector('input[name="login-user-type"]:checked').value;
-            const idMethod = currentIdMethod.login;
-            let identifier = '';
+            const nombre = 'Usuario'; // Demo - Default name
+            const apellido = 'Login';
             
-            if (idMethod === 'cedula') identifier = document.getElementById('login-cedula').value;
-            else if (idMethod === 'email') identifier = document.getElementById('login-email')?.value || '';
-            else identifier = document.getElementById('login-telefono')?.value || '';
-            
-            // Guardar datos en localStorage para demo
-            localStorage.setItem('devlink_current_user', JSON.stringify({
+            // Usar UserManager para guardar datos de forma consistente
+            UserManager.setUser({
                 type: userType,
-                identifier: identifier,
-                loggedIn: true
-            }));
+                nombre: nombre,
+                apellido: apellido
+            });
             
-            alert(`Iniciando sesión como ${userType} con ${idMethod}: ${identifier}`);
-            if (userType === 'client') window.location.href = 'dashboard_cliente.html';
-            else window.location.href = 'dashboard_desarrollador.html';
+            if (userType === 'client') {
+                window.location.href = 'dashboard_cliente.html';
+            } else {
+                window.location.href = 'dashboard_desarrollador.html';
+            }
         });
         
+        // Register Submit - Con mejora de UserManager
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const userType = document.querySelector('input[name="user-type"]:checked').value;
             const nombre = document.getElementById('register-nombre').value;
             const apellido = document.getElementById('register-apellido').value;
-            const idMethod = currentIdMethod.register;
             
-            // Guardar datos en localStorage para demo
-            localStorage.setItem('devlink_demo_user', JSON.stringify({
+            // Usar UserManager para guardar datos de forma consistente
+            UserManager.setUser({
                 type: userType,
                 nombre: nombre,
-                apellido: apellido,
-                profileComplete: false
-            }));
+                apellido: apellido
+            });
             
-            alert(`Registrando como ${userType}: ${nombre} ${apellido}\n\nSe guardaron datos en localStorage para demo.\n\nAhora serás redirigido al dashboard.`);
-            
-            if (userType === 'client') window.location.href = 'dashboard_cliente.html';
-            else window.location.href = 'dashboard_desarrollador.html';
+            if (userType === 'client') {
+                window.location.href = 'dashboard_cliente.html';
+            } else {
+                window.location.href = 'dashboard_desarrollador.html';
+            }
         });
 
         // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
             updateIdField('cedula', 'login');
             updateIdField('cedula', 'register');
+            
+            // Configurar theme toggle con ThemeManager
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            
+            // Inicializar iconos
+            if (ThemeManager.isDark()) {
+                themeToggleLightIcon.classList.remove('hidden');
+                themeToggleDarkIcon.classList.add('hidden');
+            } else {
+                themeToggleLightIcon.classList.add('hidden');
+                themeToggleDarkIcon.classList.remove('hidden');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                ThemeManager.toggle();
+                themeToggleLightIcon.classList.toggle('hidden');
+                themeToggleDarkIcon.classList.toggle('hidden');
+            });
         });
 
     </script>
