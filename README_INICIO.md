@@ -13,33 +13,37 @@ Tu proyecto DevLink ha sido transformado en una **aplicación web profesional fu
 - ✅ Datos reales (no datos simulados)
 - ✅ Documentación completa
 
-## Inicio Rápido (5 minutos)
+## Inicio Rápido (2 pasos)
 
-### Paso 1: Instalar Base de Datos
+### Paso 1: Crear Base de Datos (RECOMENDADO - MAS SIMPLE)
+```
+Abre en navegador: http://localhost/devlink/api/setup.php
+✓ BD creada automáticamente
+✓ Tablas generadas
+✓ Datos de ejemplo insertados
+✓ Listo para usar
+```
+
+**Alternativa: Importar SQL manualmente**
 ```
 1. Abre phpMyAdmin (http://localhost/phpmyadmin)
 2. Crea base de datos: devlink
-3. Importa: devlink.sql
+3. Ve a Importar y selecciona: devlink.sql
+4. Luego abre: http://localhost/devlink/api/setup.php
 ```
 
-### Paso 2: Inicializar Datos
+### Paso 2: Empezar a Usar
 ```
-Abre en navegador: http://localhost/devlink/api/init-database.php
-✓ Tablas creadas
-✓ Datos de ejemplo insertados
-✓ Usuarios predefinidos listos
-```
-
-### Paso 3: Verificar Instalación
-```
-Lee: CHECKLIST_VERIFICACION.md
-Ejecuta tests en consola (F12)
-```
-
-### Paso 4: Empezar a Usar
-```
+Abre: http://localhost/devlink/auth.html
 Login con: carlos@example.com / password123
-Explora: Proyectos, Propuestas, Desarrolladores
+Contraseña: password123
+Tipo: cliente (o "desarrollador" para probar otro rol)
+```
+
+### Paso 3: Verificar (Opcional)
+```
+Lee: SOLUCION_PROBLEMAS.md (si hay errores)
+Lee: CHECKLIST_VERIFICACION.md (para verificar todo funciona)
 ```
 
 ## Qué Hay Incluido

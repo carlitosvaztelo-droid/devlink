@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevLink - Estado de Instalación</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .status-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ddd;
+        }
+
+        .status-item.success {
+            border-left-color: #27ae60;
+            background: #f0fdf4;
+        }
+
+        .status-item.error {
+            border-left-color: #e74c3c;
+            background: #fef2f2;
+        }
+
+        .status-item.warning {
+            border-left-color: #f39c12;
+            background: #fffbf0;
+        }
+
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .status-item.success .status-icon {
+            background: #27ae60;
+        }
+
+        .status-item.error .status-icon {
+            background: #e74c3c;
+        }
+
+        .status-item.warning .status-icon {
+            background: #f39c12;
+        }
+
+        .status-content {
+            flex: 1;
+        }
+
+        .status-content h3 {
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+
+        .status-content p {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .next-steps {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .next-steps h2 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .next-steps ol {
+            margin-left: 20px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .button-group a {
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .button-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #5568d3;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .button-secondary {
+            background: #e8e8e8;
+            color: #333;
+        }
+
+        .button-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .credentials {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .credentials h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .credential-item {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        .credential-item code {
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            border: 1px solid #ffc107;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> DevLink</h1>
+            <p>Estado de Instalación</p>
+        </div>
+
+        <div class="status-grid" id="statusGrid">
+            <!-- Se llenará con JavaScript -->
+        </div>
+
+        <div class="credentials">
+            <h3><i class="fas fa-user-circle"></i> Credenciales de Prueba</h3>
+            <div class="credential-item">
+                <strong>Email:</strong> <code>carlos@example.com</code> o <code>pedro@example.com</code>
+            </div>
+            <div class="credential-item">
+                <strong>Contraseña:</strong> <code>password123</code>
+            </div>
+            <div class="credential-item">
+                <strong>Tipo:</strong> cliente / desarrollador
+            </div>
+        </div>
+
+        <div class="next-steps">
+            <h2><i class="fas fa-checklist"></i> Próximos Pasos</h2>
+            <ol>
+                <li>Si ves errores abajo, lee <strong>SOLUCION_PROBLEMAS.md</strong></li>
+                <li>Si todo está verde, abre <strong>auth.html</strong> para hacer login</li>
+                <li>Explora: Proyectos, Propuestas, Desarrolladores</li>
+                <li>Lee la documentación para entender cómo funciona el API</li>
+            </ol>
+        </div>
+
+        <div class="button-group">
+            <a href="api/setup.php" class="button-primary" target="_blank">
+                <i class="fas fa-database"></i> Configurar BD
+            </a>
+            <a href="auth.html" class="button-primary">
+                <i class="fas fa-sign-in-alt"></i> Ir a Login
+            </a>
+            <a href="SOLUCION_PROBLEMAS.md" class="button-secondary">
+                <i class="fas fa-question-circle"></i> Problemas
+            </a>
+            <a href="README_INICIO.md" class="button-secondary">
+                <i class="fas fa-book"></i> Documentación
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            const statusGrid = document.getElementById('statusGrid');
+            const statuses = [];
+
+            // Revisar si existe devlink.sql
+            const hasSql = await fetch('devlink.sql').then(r => r.ok).catch(() => false);
+            statuses.push({
+                name: 'Archivo SQL',
+                description: 'devlink.sql disponible',
+                success: hasSql
+            });
+
+            // Revisar si existen los archivos API
+            const apiFiles = [
+                { name: 'auth.php', path: 'api/auth.php' },
+                { name: 'projects.php', path: 'api/projects.php' },
+                { name: 'setup.php', path: 'api/setup.php' }
+            ];
+
+            for (const file of apiFiles) {
+                const exists = await fetch(file.path).then(r => r.ok).catch(() => false);
+                statuses.push({
+                    name: 'API: ' + file.name,
+                    description: file.path + ' disponible',
+                    success: exists
+                });
+            }
+
+            // Revisar si existen los JS
+            const jsFiles = [
+                { name: 'devlink-utils.js', path: 'js/devlink-utils.js' },
+                { name: 'api-client.js', path: 'js/api-client.js' }
+            ];
+
+            for (const file of jsFiles) {
+                const exists = await fetch(file.path).then(r => r.ok).catch(() => false);
+                statuses.push({
+                    name: 'JS: ' + file.name,
+                    description: file.path + ' disponible',
+                    success: exists
+                });
+            }
+
+            // Revisar si BD está configurada
+            let bdStatus = false;
+            try {
+                const response = await fetch('api/setup.php');
+                const data = await response.json();
+                bdStatus = data.success || false;
+            } catch (e) {
+                bdStatus = false;
+            }
+
+            statuses.push({
+                name: 'Base de Datos',
+                description: bdStatus ? 'BD configurada correctamente' : 'Requiere configuración',
+                success: bdStatus,
+                warning: !bdStatus
+            });
+
+            // Renderizar estatuses
+            statusGrid.innerHTML = statuses.map(status => `
+                <div class="status-item ${status.success ? 'success' : status.warning ? 'warning' : 'error'}">
+                    <div class="status-icon">
+                        <i class="fas fa-${status.success ? 'check' : status.warning ? 'exclamation' : 'times'}"></i>
+                    </div>
+                    <div class="status-content">
+                        <h3>${status.name}</h3>
+                        <p>${status.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Ejecutar verificación al cargar
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>

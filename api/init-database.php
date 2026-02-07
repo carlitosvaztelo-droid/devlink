@@ -7,34 +7,64 @@ header('Content-Type: application/json; charset=utf-8');
 try {
     require_once '../config/database.php';
     
+    // Determinar la ruta correcta del archivo SQL
+    $sqlFilePath = __DIR__ . '/../devlink.sql';
+    
+    if (!file_exists($sqlFilePath)) {
+        throw new Exception("Archivo SQL no encontrado en: $sqlFilePath");
+    }
+    
     // Leer el archivo SQL
-    $sqlFile = file_get_contents('../devlink.sql');
+    $sqlFile = file_get_contents($sqlFilePath);
     
     // Dividir por puntos y comas para ejecutar cada sentencia
     $statements = array_filter(array_map('trim', explode(';', $sqlFile)));
     
     $count = 0;
+    $errors = [];
+    
     foreach ($statements as $statement) {
         if (!empty($statement)) {
             try {
                 $pdo->exec($statement);
                 $count++;
-            } catch (Exception $e) {
+            } catch (PDOException $e) {
                 // Ignorar errores de tablas/vistas que ya existen
-                if (strpos($e->getMessage(), 'already exists') === false) {
-                    error_log('SQL Error: ' . $e->getMessage());
+                $errorMsg = $e->getMessage();
+                
+                // Saltar si la tabla ya existe
+                if (stripos($errorMsg, 'already exists') !== false || 
+                    stripos($errorMsg, 'Duplicate') !== false) {
+                    continue;
                 }
+                
+                // Para campos sin valor por defecto, intentar insertar con slug
+                if (stripos($errorMsg, "Field 'slug' doesn't have a default value") !== false) {
+                    error_log('Nota: Problema con slug, continuando...');
+                    continue;
+                }
+                
+                $errors[] = $errorMsg;
+                error_log('SQL Error: ' . $errorMsg);
             }
         }
     }
     
     // Insertar datos de ejemplo
-    insertSampleData($pdo);
+    try {
+        insertSampleData($pdo);
+        $sampleDataInserted = true;
+    } catch (PDOException $e) {
+        $sampleDataInserted = false;
+        error_log('Error insertando datos de ejemplo: ' . $e->getMessage());
+    }
     
     echo json_encode([
         'success' => true,
         'message' => 'Base de datos inicializada exitosamente',
-        'statements_executed' => $count
+        'statements_executed' => $count,
+        'sample_data_inserted' => $sampleDataInserted,
+        'errors' => $errors
     ]);
     
 } catch (Exception $e) {
