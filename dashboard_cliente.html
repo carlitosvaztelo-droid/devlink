@@ -162,10 +162,12 @@
 
     <script src="js/devlink-utils.js"></script>
     <script src="js/api-client.js"></script>
+    <script src="js/dashboard-loader.js"></script>
     <script>
-        // SPA Navigation System
+        // SPA Navigation System con carga de datos real
         const DashboardSPA = {
             currentSection: 'home',
+            userType: 'cliente',
             
             openSection(section) {
                 // Hide all sections
@@ -192,79 +194,59 @@
                 }
                 
                 this.currentSection = section;
-                
-                // Load content for the section
                 this.loadSectionContent(section);
             },
             
             loadSectionContent(section) {
                 const container = document.getElementById(`section-${section}`);
-                if (!container || container.innerHTML) return; // Already loaded
+                if (!container) return;
+                
+                // Si ya tiene contenido y no es placeholders, no recarga
+                const hasContent = container.innerHTML && !container.innerHTML.includes('Cargando');
+                if (hasContent) return;
                 
                 switch(section) {
+                    case 'home':
+                        DashboardLoader.renderHome(container, this.userType);
+                        break;
                     case 'search':
-                        this.loadSearch(container);
+                        DashboardLoader.renderSearch(container, this.userType);
                         break;
                     case 'projects':
-                        this.loadProjects(container);
+                        DashboardLoader.renderProjects(container);
                         break;
                     case 'contracts':
-                        this.loadContracts(container);
+                        DashboardLoader.renderContracts(container);
                         break;
                     case 'messages':
-                        this.loadMessages(container);
+                        DashboardLoader.renderMessages(container);
                         break;
                     case 'payments':
-                        this.loadPayments(container);
+                        DashboardLoader.renderPayments(container);
                         break;
                     case 'proposals':
-                        this.loadProposals(container);
+                        DashboardLoader.renderProposals(container);
                         break;
                     case 'profile':
-                        this.loadProfile(container);
+                        DashboardLoader.renderProfile(container);
                         break;
                 }
-            },
-            
-            loadSearch(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando búsqueda...</p></div>';
-                // Aquí irá el contenido de search.html
-            },
-            
-            loadProjects(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando proyectos...</p></div>';
-                // Aquí irá el contenido de projects.html
-            },
-            
-            loadContracts(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando contratos...</p></div>';
-                // Aquí irá el contenido de contracts.html
-            },
-            
-            loadMessages(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando mensajes...</p></div>';
-                // Aquí irá el contenido de messages.html
-            },
-            
-            loadPayments(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando pagos...</p></div>';
-                // Aquí irá el contenido de payments.html
-            },
-            
-            loadProposals(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando propuestas...</p></div>';
-                // Aquí irá el contenido de proposals.html
-            },
-            
-            loadProfile(container) {
-                container.innerHTML = '<div class="text-center py-12"><p>Cargando perfil...</p></div>';
-                // Aquí irá el contenido de profile.html
             }
         };
         
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Initialize sidebar navigation
             NavigationGenerator.initSidebar('dashboard_cliente');
+            
+            // Initialize Dashboard Loader
+            DashboardSPA.userType = UserManager.isClient() ? 'cliente' : 'desarrollador';
+            await DashboardLoader.init(DashboardSPA.userType);
+            
+            // Load home section data
+            const homeContainer = document.getElementById('section-home');
+            if (homeContainer) {
+                DashboardLoader.renderHome(homeContainer, DashboardSPA.userType);
+            }
             
             // Logout button
             const logoutBtn = document.getElementById('logout-btn');

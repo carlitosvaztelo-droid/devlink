@@ -121,6 +121,10 @@ const APIClient = {
             return APIClient.request(`proposals.php?action=get-by-project&project_id=${projectId}`, 'GET');
         },
         
+        async listByProject() {
+            return APIClient.request('proposals.php?action=get-by-project', 'GET');
+        },
+        
         async getByDeveloper() {
             return APIClient.request('proposals.php?action=get-by-developer', 'GET');
         },
@@ -199,6 +203,10 @@ const APIClient = {
     
     // ============ MENSAJES ============
     Messages: {
+        async list(page = 1, limit = 50) {
+            return APIClient.request(`messages.php?action=list&page=${page}&limit=${limit}`, 'GET');
+        },
+        
         async send(destinatarioId, contenido, proyectoId = null) {
             return APIClient.request('messages.php?action=send', 'POST', {
                 destinatario_id: destinatarioId,
@@ -222,6 +230,10 @@ const APIClient = {
     
     // ============ BÚSQUEDA ============
     Search: {
+        async search(query) {
+            return APIClient.request(`search.php?action=global&q=${encodeURIComponent(query)}`, 'GET');
+        },
+        
         async global(query) {
             return APIClient.request(`search.php?action=global&q=${encodeURIComponent(query)}`, 'GET');
         },
@@ -251,6 +263,21 @@ const APIClient = {
         
         async getSkills() {
             return APIClient.request('search.php?action=skills', 'GET');
+        }
+    },
+    
+    // ============ PAGOS ============
+    Payments: {
+        async getBalance() {
+            return APIClient.request('payments.php?action=get-balance', 'GET');
+        },
+        
+        async getTransactions(page = 1, limit = 20) {
+            return APIClient.request(`payments.php?action=get-transactions&page=${page}&limit=${limit}`, 'GET');
+        },
+        
+        async getTotalEarnings() {
+            return APIClient.request('payments.php?action=get-total-earnings', 'GET');
         }
     }
 };
