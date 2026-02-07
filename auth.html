@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación - DevLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {'sans': ['Inter', 'system-ui', 'sans-serif']},
+                    colors: {
+                        primary: {light: '#2563eb', DEFAULT: '#3b82f6', dark: '#1e40af'},
+                        secondary: '#1e40af', accent: '#06b6d4', 'gray-950': '#030712', 'blue-950': '#172554'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .auth-tab.active {background-color: rgba(37, 99, 235, 0.1); color: #2563eb;}
+        .dark .auth-tab.active {background-color: rgba(59, 130, 246, 0.1); color: #3b82f6;}
+        .form-section {display: none;}
+        .form-section.active {display: block; animation: fadeIn 0.5s ease-out;}
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-input { transition: all 0.3s ease; }
+        .form-input:focus { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .dark .form-input:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        
+        .id-method-btn { transition: all 0.3s ease; }
+        .id-method-btn.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        .dark .id-method-btn.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .radio-card:checked + div {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 h-screen overflow-hidden flex">
+
+    <div class="w-full lg:w-1/2 h-full flex flex-col bg-white dark:bg-gray-900 overflow-y-auto hide-scrollbar border-r border-gray-200 dark:border-gray-800">
+        
+        <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center">
+                            <img src="img/DevLink.png" alt="DevLink" class="h-10 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <span class="text-2xl font-bold text-primary hidden">DevLink</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <a href="index.html" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-light dark:hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <i class="fas fa-home mr-1"></i> Volver al inicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12">
+            <div class="w-full max-w-md space-y-8">
+                
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold">Bienvenido a DevLink</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">Conecta con talento y oportunidades</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                    <div class="flex border-b border-gray-200 dark:border-gray-800">
+                        <button id="login-tab" class="auth-tab active flex-1 py-4 text-center font-medium text-sm sm:text-base" onclick="showForm('login')">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                        </button>
+                        <button id="register-tab" class="auth-tab flex-1 py-4 text-center font-medium text-sm sm:text-base" onclick="showForm('register')">
+                            <i class="fas fa-user-plus mr-2"></i>Registrarse
+                        </button>
+                    </div>
+
+                    <div id="login-form" class="form-section active p-6 sm:p-8">
+                        <form id="loginForm">
+                            <div class="space-y-5">
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-3">Voy a entrar como:</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="login-user-type" value="client" checked class="radio-card hidden">
+                                            <div class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-light dark:hover:border-primary transition-all">
+                                                <i class="fas fa-briefcase mr-2 text-gray-500"></i>
+                                                <span class="font-medium text-sm">Cliente</span>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="login-user-type" value="developer" class="radio-card hidden">
+                                            <div class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-light dark:hover:border-primary transition-all">
+                                                <i class="fas fa-code mr-2 text-gray-500"></i>
+                                                <span class="font-medium text-sm">Dev</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-3">Identifícate con:</label>
+                                    <div class="grid grid-cols-3 gap-2 mb-4">
+                                        <button type="button" class="id-method-btn active py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('cedula', 'login')">
+                                            <i class="fas fa-id-card mb-1"></i>
+                                            <span>Cédula</span>
+                                        </button>
+                                        <button type="button" class="id-method-btn py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('email', 'login')">
+                                            <i class="fas fa-envelope mb-1"></i>
+                                            <span>Email</span>
+                                        </button>
+                                        <button type="button" class="id-method-btn py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('telefono', 'login')">
+                                            <i class="fas fa-phone mb-1"></i>
+                                            <span>Teléfono</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="login-id-field">
+                                    <label for="login-cedula" class="block text-sm font-medium mb-2">Cédula</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-id-card text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="login-cedula" name="cedula" placeholder="Ej: V-12345678" required
+                                               class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="login-password" class="block text-sm font-medium mb-2">Contraseña</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-lock text-gray-400"></i>
+                                        </div>
+                                        <input type="password" id="login-password" name="password" placeholder="Tu contraseña" required
+                                               class="form-input w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('login-password')">
+                                            <i class="fas fa-eye text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-primary-light dark:bg-primary hover:bg-primary-dark dark:hover:bg-secondary text-white font-medium py-3 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="register-form" class="form-section p-6 sm:p-8">
+                        <form id="registerForm">
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium mb-3">Tipo de cuenta *</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="user-type" value="client" checked class="radio-card hidden">
+                                            <div class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-light dark:hover:border-primary transition-all">
+                                                <i class="fas fa-briefcase mr-2 text-gray-500"></i>
+                                                <div class="ml-1">
+                                                    <span class="block font-medium text-sm">Cliente</span>
+                                                    <span class="block text-[10px] text-gray-500">Contratar</span>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="user-type" value="developer" class="radio-card hidden">
+                                            <div class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-light dark:hover:border-primary transition-all">
+                                                <i class="fas fa-code mr-2 text-gray-500"></i>
+                                                <div class="ml-1">
+                                                    <span class="block font-medium text-sm">Dev</span>
+                                                    <span class="block text-[10px] text-gray-500">Trabajar</span>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- NUEVO: Campos de nombre y apellido -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="register-nombre" class="block text-sm font-medium mb-2">Nombre *</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i class="fas fa-user text-gray-400"></i>
+                                            </div>
+                                            <input type="text" id="register-nombre" name="nombre" placeholder="Tu nombre" required
+                                                   class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="register-apellido" class="block text-sm font-medium mb-2">Apellido *</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i class="fas fa-user text-gray-400"></i>
+                                            </div>
+                                            <input type="text" id="register-apellido" name="apellido" placeholder="Tu apellido" required
+                                                   class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-3">Identifícate con *</label>
+                                    <div class="grid grid-cols-3 gap-2 mb-4">
+                                        <button type="button" class="id-method-btn active py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('cedula', 'register')">
+                                            <i class="fas fa-id-card mb-1"></i>
+                                            <span>Cédula</span>
+                                        </button>
+                                        <button type="button" class="id-method-btn py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('email', 'register')">
+                                            <i class="fas fa-envelope mb-1"></i>
+                                            <span>Email</span>
+                                        </button>
+                                        <button type="button" class="id-method-btn py-2 px-3 text-sm border rounded-lg flex flex-col items-center justify-center" onclick="selectIdMethod('telefono', 'register')">
+                                            <i class="fas fa-phone mb-1"></i>
+                                            <span>Teléfono</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="register-id-field">
+                                    <label for="register-cedula" class="block text-sm font-medium mb-2">Cédula *</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-id-card text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="register-cedula" name="cedula" placeholder="Ej: V-12345678" required
+                                               class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <!-- Email adicional para registro -->
+                                <div id="register-email-field" class="hidden">
+                                    <label for="register-email" class="block text-sm font-medium mb-2">Email *</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-envelope text-gray-400"></i>
+                                        </div>
+                                        <input type="email" id="register-email" name="email" placeholder="tucorreo@ejemplo.com" required
+                                               class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <!-- Teléfono adicional para registro -->
+                                <div id="register-telefono-field" class="hidden">
+                                    <label for="register-telefono" class="block text-sm font-medium mb-2">Teléfono *</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-phone text-gray-400"></i>
+                                        </div>
+                                        <input type="tel" id="register-telefono" name="telefono" placeholder="+58 412-1234567" required
+                                               class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="register-password" class="block text-sm font-medium mb-2">Contraseña *</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-lock text-gray-400"></i>
+                                        </div>
+                                        <input type="password" id="register-password" name="password" placeholder="Mínimo 8 caracteres" required
+                                               class="form-input w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('register-password')">
+                                            <i class="fas fa-eye text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="register-confirm-password" class="block text-sm font-medium mb-2">Confirmar Contraseña *</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-lock text-gray-400"></i>
+                                        </div>
+                                        <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="Repite tu contraseña" required
+                                               class="form-input w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('register-confirm-password')">
+                                            <i class="fas fa-eye text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-primary-light dark:bg-primary hover:bg-primary-dark dark:hover:bg-secondary text-white font-medium py-3 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                                    <i class="fas fa-user-plus mr-2"></i>Crear Cuenta
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden lg:flex w-1/2 bg-[#0F1C3F] relative flex-col items-center justify-center text-center p-12 overflow-hidden">
+        
+        <div class="absolute inset-0 bg-gradient-to-br from-[#1e40af]/20 to-[#0F1C3F] z-0"></div>
+        <div class="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+
+        <div class="relative z-10 w-full max-w-lg">
+            <div class="bg-[#FFB74D] rounded-3xl p-0 overflow-hidden shadow-2xl mx-auto w-72 h-72 mb-10 transform rotate-1 hover:rotate-0 transition-transform duration-500 border-4 border-white/10">
+                <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Professional" class="w-full h-full object-cover">
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                DevLink.<br/>
+                <span class="text-blue-400">Tu trabajo.</span><br/>
+                <span class="text-white">Tu lugar.</span><br/>
+                <span class="text-cyan-400">Tú eliges.</span>
+            </h1>
+            
+            <p class="text-gray-300 text-lg max-w-md mx-auto leading-relaxed">
+                Conecta con clientes de todo el mundo. Trabaja en proyectos que te apasionan.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+            themeToggleDarkIcon.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleLightIcon.classList.add('hidden');
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            themeToggleLightIcon.classList.toggle('hidden');
+            themeToggleDarkIcon.classList.toggle('hidden');
+            
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+        
+        // Variables globales
+        let currentIdMethod = {
+            login: 'cedula',
+            register: 'cedula'
+        };
+        
+        // Form switching function
+        function showForm(formType) {
+            document.querySelectorAll('.form-section').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(`${formType}-form`).classList.add('active');
+            document.getElementById(`${formType}-tab`).classList.add('active');
+        }
+        
+        // Seleccionar método de identificación
+        function selectIdMethod(method, formType) {
+            currentIdMethod[formType] = method;
+            const containerId = formType === 'login' ? 'login-form' : 'register-form';
+            const buttons = document.querySelectorAll(`#${containerId} .id-method-btn`);
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.querySelector('span').textContent.toLowerCase() === method) {
+                    btn.classList.add('active');
+                }
+            });
+            updateIdField(method, formType);
+        }
+        
+        // Actualizar campo de identificación
+        function updateIdField(method, formType) {
+            const fieldContainer = document.getElementById(`${formType}-id-field`);
+            let html = '';
+            
+            // Mostrar/ocultar campos adicionales en registro
+            if (formType === 'register') {
+                document.getElementById('register-email-field').classList.add('hidden');
+                document.getElementById('register-telefono-field').classList.add('hidden');
+            }
+            
+            switch(method) {
+                case 'cedula':
+                    html = `
+                        <label for="${formType}-cedula" class="block text-sm font-medium mb-2">Cédula${formType === 'register' ? ' *' : ''}</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-id-card text-gray-400"></i>
+                            </div>
+                            <input type="text" id="${formType}-cedula" name="cedula" placeholder="Ej: V-12345678" required
+                                   class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                        </div>`;
+                    break;
+                case 'email':
+                    html = `
+                        <label for="${formType}-email" class="block text-sm font-medium mb-2">Email${formType === 'register' ? ' *' : ''}</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="${formType}-email" name="email" placeholder="tucorreo@ejemplo.com" required
+                                   class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                        </div>`;
+                    
+                    if (formType === 'register') {
+                        document.getElementById('register-email-field').classList.remove('hidden');
+                    }
+                    break;
+                case 'telefono':
+                    html = `
+                        <label for="${formType}-telefono" class="block text-sm font-medium mb-2">Teléfono${formType === 'register' ? ' *' : ''}</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-phone text-gray-400"></i>
+                            </div>
+                            <input type="tel" id="${formType}-telefono" name="telefono" placeholder="+58 412-1234567" required
+                                   class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary">
+                        </div>`;
+                    
+                    if (formType === 'register') {
+                        document.getElementById('register-telefono-field').classList.remove('hidden');
+                    }
+                    break;
+            }
+            fieldContainer.innerHTML = html;
+        }
+        
+        // Toggle password
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Demo Submits
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userType = document.querySelector('input[name="login-user-type"]:checked').value;
+            const idMethod = currentIdMethod.login;
+            let identifier = '';
+            
+            if (idMethod === 'cedula') identifier = document.getElementById('login-cedula').value;
+            else if (idMethod === 'email') identifier = document.getElementById('login-email')?.value || '';
+            else identifier = document.getElementById('login-telefono')?.value || '';
+            
+            // Guardar datos en localStorage para demo
+            localStorage.setItem('devlink_current_user', JSON.stringify({
+                type: userType,
+                identifier: identifier,
+                loggedIn: true
+            }));
+            
+            alert(`Iniciando sesión como ${userType} con ${idMethod}: ${identifier}`);
+            if (userType === 'client') window.location.href = 'dashboard_cliente.html';
+            else window.location.href = 'dashboard_desarrollador.html';
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userType = document.querySelector('input[name="user-type"]:checked').value;
+            const nombre = document.getElementById('register-nombre').value;
+            const apellido = document.getElementById('register-apellido').value;
+            const idMethod = currentIdMethod.register;
+            
+            // Guardar datos en localStorage para demo
+            localStorage.setItem('devlink_demo_user', JSON.stringify({
+                type: userType,
+                nombre: nombre,
+                apellido: apellido,
+                profileComplete: false
+            }));
+            
+            alert(`Registrando como ${userType}: ${nombre} ${apellido}\n\nSe guardaron datos en localStorage para demo.\n\nAhora serás redirigido al dashboard.`);
+            
+            if (userType === 'client') window.location.href = 'dashboard_cliente.html';
+            else window.location.href = 'dashboard_desarrollador.html';
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            updateIdField('cedula', 'login');
+            updateIdField('cedula', 'register');
+        });
+
+    </script>
+</body>
+</html>

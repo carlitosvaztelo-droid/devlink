@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Desarrollador - DevLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {'sans': ['Inter', 'system-ui', 'sans-serif']},
+                    colors: {
+                        primary: {light: '#2563eb', DEFAULT: '#3b82f6', dark: '#1e40af'},
+                        'gray-950': '#030712',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white min-h-screen flex overflow-hidden transition-colors duration-300">
+
+    <aside class="w-20 lg:w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col z-30 transition-all">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
+                    <i class="fas fa-link text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-cyan-400 hidden lg:block">DevLink</span>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="dashboard_desarrollador.html" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg shadow-primary/30">
+                    <i class="fas fa-th-large w-5"></i><span class="font-medium hidden lg:block">Dashboard</span>
+                </a>
+                <a href="search.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-search w-5"></i><span class="font-medium hidden lg:block">Buscar Proyectos</span>
+                </a>
+                <a href="proposals.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-paper-plane w-5"></i><span class="font-medium hidden lg:block">Mis Propuestas</span>
+                </a>
+                <a href="contracts.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-file-signature w-5"></i><span class="font-medium hidden lg:block">Contratos</span>
+                </a>
+                <a href="messages.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-comment-dots w-5"></i><span class="font-medium hidden lg:block">Mensajes</span>
+                </a>
+                <a href="payments.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-wallet w-5"></i><span class="font-medium hidden lg:block">Pagos</span>
+                </a>
+                <a href="help.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                    <i class="fas fa-question-circle w-5"></i><span class="font-medium hidden lg:block">Ayuda</span>
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto p-6 border-t border-gray-100 dark:border-gray-800">
+             <button id="theme-toggle" class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl">
+                <i class="fas fa-adjust w-5"></i><span class="hidden lg:block">Cambiar Tema</span>
+            </button>
+            <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl mt-2 transition-all">
+                <i class="fas fa-sign-out-alt w-5"></i><span class="hidden lg:block">Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 flex items-center justify-between z-20">
+            <h2 class="text-xl font-bold">Hola, <span id="welcome-name" class="text-primary">Dev</span></h2>
+            <div class="flex items-center gap-4">
+                 <a href="messages.html" class="relative p-2 text-gray-500 hover:text-primary transition-colors">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+                </a>
+                <a href="profile.html" class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md cursor-pointer">D</a>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg shadow-green-500/20 group cursor-pointer" onclick="window.location.href='payments.html'">
+                    <div class="relative z-10">
+                        <h3 class="text-4xl font-black mb-1">REF 1.2k</h3>
+                        <p class="text-green-100 text-sm font-medium">Disponible</p>
+                    </div>
+                    <i class="fas fa-money-bill-wave absolute -bottom-6 -right-6 text-[8rem] text-white/10 group-hover:scale-110 transition-transform"></i>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="window.location.href='contracts.html'">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-code"></i></div>
+                        <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded-lg">En curso</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">2</h3>
+                    <p class="text-gray-500 text-xs mt-1">Proyectos Activos</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="window.location.href='proposals.html'">
+                     <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 text-purple-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">5</h3>
+                    <p class="text-gray-500 text-xs mt-1">Propuestas Enviadas</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-[2rem] border border-gray-200 dark:border-gray-800 p-8 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-lg">Entregas Pendientes</h3>
+                        <a href="contracts.html" class="text-primary text-sm font-bold hover:underline">Ir a Contratos</a>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 border border-gray-100 dark:border-gray-800 rounded-2xl">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-400">E-commerce Repuestos</span>
+                                <span class="text-xs font-bold text-red-500">Vence mañana</span>
+                            </div>
+                            <h4 class="font-bold text-sm mb-3">Integración pasarela de pagos</h4>
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 dark:bg-gray-800 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h3 class="font-bold text-xl mb-4">Empezar</h3>
+                        <div class="space-y-3">
+                            <button onclick="window.location.href='search.html'" class="w-full bg-primary hover:bg-primary-dark py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+                                <i class="fas fa-search"></i> Buscar Trabajo
+                            </button>
+                            <button onclick="window.location.href='profile.html'" class="w-full bg-white/10 hover:bg-white/20 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-user-edit"></i> Actualizar Perfil
+                            </button>
+                        </div>
+                    </div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500 blur-[60px] opacity-20"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Cargar usuario
+        const userData = JSON.parse(localStorage.getItem('devlink_demo_user'));
+        if (userData) {
+            document.getElementById('welcome-name').textContent = userData.nombre;
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('devlink_demo_user');
+            window.location.href = 'auth.html';
+        });
+
+        // Theme
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>

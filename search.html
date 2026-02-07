@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda - DevLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {'sans': ['Inter', 'system-ui', 'sans-serif']},
+                    colors: {
+                        primary: {light: '#2563eb', DEFAULT: '#3b82f6', dark: '#1e40af'},
+                        'gray-950': '#030712',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 20px; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white min-h-screen flex overflow-hidden transition-colors duration-300">
+
+    <aside class="w-20 lg:w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col z-30 transition-all">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
+                    <i class="fas fa-link text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-cyan-400 hidden lg:block">DevLink</span>
+            </div>
+            <nav id="sidebar-nav" class="space-y-2"></nav>
+        </div>
+        <div class="mt-auto p-6 border-t border-gray-100 dark:border-gray-800">
+             <button id="theme-toggle" class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl">
+                <i class="fas fa-adjust w-5"></i><span class="hidden lg:block">Cambiar Tema</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-24 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 flex items-center justify-between z-20 gap-8">
+            <div class="flex-1 max-w-2xl relative">
+                <i class="fas fa-search absolute left-5 top-4 text-gray-400 text-lg"></i>
+                <input type="text" id="main-search-input" class="w-full pl-14 pr-6 py-3.5 bg-gray-100 dark:bg-gray-800 border-none rounded-2xl outline-none text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 transition-all shadow-inner" placeholder="Escribe para buscar...">
+                <button class="absolute right-3 top-2.5 bg-primary text-white p-2 rounded-xl shadow-lg hover:scale-105 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-white font-bold shadow-md" id="user-avatar">U</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            <div class="flex flex-col xl:flex-row gap-8">
+                
+                <aside class="w-full xl:w-72 shrink-0 space-y-6">
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg">Filtros</h3>
+                            <button class="text-xs text-primary font-bold hover:underline">Limpiar</button>
+                        </div>
+                        
+                        <div id="filters-container" class="space-y-6"></div>
+                    </div>
+                </aside>
+
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold" id="results-title">Resultados</h2>
+                        <span class="text-sm text-gray-500" id="results-count">Mostrando 4 resultados</span>
+                    </div>
+
+                    <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('devlink_demo_user')) || { type: 'dev', nombre: 'Usuario', apellido: 'Demo' };
+        const isClient = user.type === 'client';
+        
+        // Avatar
+        document.getElementById('user-avatar').textContent = user.nombre[0];
+
+        // Sidebar Navigation
+        const nav = document.getElementById('sidebar-nav');
+        const dashboardUrl = isClient ? 'dashboard_cliente.html' : 'dashboard_desarrollador.html';
+        
+        nav.innerHTML = `
+            <a href="${dashboardUrl}" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                <i class="fas fa-th-large w-5"></i><span class="font-medium hidden lg:block">Dashboard</span>
+            </a>
+            <a href="search.html" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg shadow-primary/30">
+                <i class="fas fa-search w-5"></i><span class="font-medium hidden lg:block">Búsqueda</span>
+            </a>
+            <a href="projects.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                <i class="fas fa-layer-group w-5"></i><span class="font-medium hidden lg:block">${isClient ? 'Mis Publicaciones' : 'Proyectos'}</span>
+            </a>
+            <a href="messages.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                <i class="fas fa-comment-dots w-5"></i><span class="font-medium hidden lg:block">Mensajes</span>
+            </a>
+            <a href="payments.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                <i class="fas fa-wallet w-5"></i><span class="font-medium hidden lg:block">Pagos</span>
+            </a>
+        `;
+
+        // Lógica de Búsqueda y Filtros
+        const filtersContainer = document.getElementById('filters-container');
+        const resultsGrid = document.getElementById('results-grid');
+        const searchInput = document.getElementById('main-search-input');
+        const resultsTitle = document.getElementById('results-title');
+
+        if (isClient) {
+            // CLIENTE BUSCA DESARROLLADORES
+            searchInput.placeholder = "Buscar desarrolladores por habilidad (ej. PHP, React)...";
+            resultsTitle.textContent = "Talento Disponible";
+
+            filtersContainer.innerHTML = `
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Habilidades</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> PHP / Laravel</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> Frontend (JS/CSS)</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> Bases de Datos</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Nivel de Experiencia</label>
+                    <select class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm outline-none">
+                        <option>Cualquiera</option>
+                        <option>Junior</option>
+                        <option>Intermedio</option>
+                        <option>Senior</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Ubicación</label>
+                    <select class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm outline-none">
+                        <option>Guanare (Centro)</option>
+                        <option>Mesa de Cavacas</option>
+                        <option>Remoto</option>
+                    </select>
+                </div>
+            `;
+
+            resultsGrid.innerHTML = `
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all group cursor-pointer relative overflow-hidden">
+                    <div class="flex items-center gap-4 mb-4 relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">JS</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-primary transition-colors">Juan Sánchez</h3>
+                            <p class="text-sm text-gray-500">Backend Specialist (PHP)</p>
+                            <div class="flex gap-1 text-yellow-400 text-xs mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Experto en arquitecturas escalables y bases de datos MySQL. He trabajado con sistemas administrativos locales.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-primary text-[10px] font-bold rounded">PHP</span>
+                        <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-primary text-[10px] font-bold rounded">Laravel</span>
+                        <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-primary text-[10px] font-bold rounded">API REST</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="profile.html" class="flex-1 py-2.5 text-center bg-gray-100 dark:bg-gray-800 rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Ver Perfil</a>
+                        <button class="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Contactar</button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all group cursor-pointer">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white text-xl font-bold">MG</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-primary transition-colors">María García</h3>
+                            <p class="text-sm text-gray-500">UI/UX Designer & Frontend</p>
+                            <div class="flex gap-1 text-yellow-400 text-xs mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Diseño interfaces modernas y responsivas con Tailwind CSS. Enfoque en experiencia de usuario móvil.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-500 text-[10px] font-bold rounded">Figma</span>
+                        <span class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-500 text-[10px] font-bold rounded">React</span>
+                        <span class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-500 text-[10px] font-bold rounded">Tailwind</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="profile.html" class="flex-1 py-2.5 text-center bg-gray-100 dark:bg-gray-800 rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Ver Perfil</a>
+                        <button class="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition-colors">Contactar</button>
+                    </div>
+                </div>
+            `;
+
+        } else {
+            // DESARROLLADOR BUSCA PROYECTOS
+            searchInput.placeholder = "Buscar proyectos (ej. E-commerce, Landing Page)...";
+            resultsTitle.textContent = "Oportunidades Laborales";
+
+            filtersContainer.innerHTML = `
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Categoría</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> Desarrollo Web</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> Móvil (Android/iOS)</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="rounded text-primary focus:ring-0"> Diseño Gráfico</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Presupuesto (REF)</label>
+                    <div class="flex gap-2">
+                        <input type="number" placeholder="Min" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm outline-none">
+                        <input type="number" placeholder="Max" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Tipo de Contrato</label>
+                    <select class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm outline-none">
+                        <option>Proyecto Fijo</option>
+                        <option>Por Horas</option>
+                    </select>
+                </div>
+            `;
+
+            resultsGrid.innerHTML = `
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center text-xl text-orange-500">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg group-hover:text-primary transition-colors">Tienda Online Repuestos</h3>
+                                <p class="text-xs text-gray-500">Inversiones Los Llanos • Hace 4h</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 text-[10px] font-bold rounded-full uppercase tracking-widest">REF 500+</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-6">Buscamos crear un catálogo digital sincronizado con inventario físico. Preferiblemente usando WooCommerce o desarrollo a medida.</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                        <div class="flex -space-x-2">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 border-2 border-white dark:border-gray-900 flex items-center justify-center text-[10px] font-bold">A</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-300 border-2 border-white dark:border-gray-900 flex items-center justify-center text-[10px] font-bold">+5</div>
+                        </div>
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-primary dark:hover:bg-primary dark:hover:text-white px-6 py-2 rounded-xl font-bold text-sm transition-all">Ver Detalles</button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-xl text-primary">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg group-hover:text-primary transition-colors">Sistema de Citas Médicas</h3>
+                                <p class="text-xs text-gray-500">Clínica San José • Hace 1d</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 text-[10px] font-bold rounded-full uppercase tracking-widest">REF 800</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-6">Requerimos un sistema web para gestión de pacientes y citas. Debe ser intuitivo y rápido.</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                        <span class="text-xs font-bold text-gray-400">0 propuestas aún</span>
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-primary dark:hover:bg-primary dark:hover:text-white px-6 py-2 rounded-xl font-bold text-sm transition-all">Ver Detalles</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Theme Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>
