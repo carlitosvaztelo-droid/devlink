@@ -33,28 +33,28 @@
                 <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-cyan-400 hidden lg:block">DevLink</span>
             </div>
             
-            <nav class="space-y-2">
-                <a href="dashboard_desarrollador.html" class="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg shadow-primary/30">
+            <nav class="space-y-2" id="main-nav">
+                <button onclick="DashboardSPA.openSection('home')" class="nav-link active w-full flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-xl shadow-lg shadow-primary/30" data-section="home">
                     <i class="fas fa-th-large w-5"></i><span class="font-medium hidden lg:block">Dashboard</span>
-                </a>
-                <a href="search.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                </button>
+                <button onclick="DashboardSPA.openSection('search')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="search">
                     <i class="fas fa-search w-5"></i><span class="font-medium hidden lg:block">Buscar Proyectos</span>
-                </a>
-                <a href="proposals.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                </button>
+                <button onclick="DashboardSPA.openSection('proposals')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="proposals">
                     <i class="fas fa-paper-plane w-5"></i><span class="font-medium hidden lg:block">Mis Propuestas</span>
-                </a>
-                <a href="contracts.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                </button>
+                <button onclick="DashboardSPA.openSection('contracts')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="contracts">
                     <i class="fas fa-file-signature w-5"></i><span class="font-medium hidden lg:block">Contratos</span>
-                </a>
-                <a href="messages.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                </button>
+                <button onclick="DashboardSPA.openSection('messages')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="messages">
                     <i class="fas fa-comment-dots w-5"></i><span class="font-medium hidden lg:block">Mensajes</span>
-                </a>
-                <a href="payments.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
+                </button>
+                <button onclick="DashboardSPA.openSection('payments')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="payments">
                     <i class="fas fa-wallet w-5"></i><span class="font-medium hidden lg:block">Pagos</span>
-                </a>
-                <a href="help.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all">
-                    <i class="fas fa-question-circle w-5"></i><span class="font-medium hidden lg:block">Ayuda</span>
-                </a>
+                </button>
+                <button onclick="DashboardSPA.openSection('profile')" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-primary hover:bg-blue-50 dark:hover:bg-gray-800 rounded-xl transition-all text-left" data-section="profile">
+                    <i class="fas fa-user-circle w-5"></i><span class="font-medium hidden lg:block">Mi Perfil</span>
+                </button>
             </nav>
         </div>
         <div class="mt-auto p-6 border-t border-gray-100 dark:border-gray-800">
@@ -71,83 +71,180 @@
         <header class="h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 flex items-center justify-between z-20">
             <h2 class="text-xl font-bold">Hola, <span id="welcome-name" class="text-primary">Dev</span></h2>
             <div class="flex items-center gap-4">
-                 <a href="messages.html" class="relative p-2 text-gray-500 hover:text-primary transition-colors">
+                <button onclick="DashboardSPA.openSection('messages')" class="relative p-2 text-gray-500 hover:text-primary transition-colors">
                     <i class="fas fa-bell text-xl"></i>
                     <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
-                </a>
-                <a href="profile.html" class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md cursor-pointer">D</a>
+                </button>
+                <button onclick="DashboardSPA.openSection('profile')" class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-400 to-blue-500 flex items-center justify-center text-white font-bold shadow-md cursor-pointer" id="profile-avatar">D</button>
             </div>
         </header>
 
         <div class="flex-1 overflow-y-auto p-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg shadow-green-500/20 group cursor-pointer" onclick="window.location.href='payments.html'">
-                    <div class="relative z-10">
-                        <h3 class="text-4xl font-black mb-1">REF 1.2k</h3>
-                        <p class="text-green-100 text-sm font-medium">Disponible</p>
+            <!-- Home Section -->
+            <div id="section-home" class="section-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg shadow-green-500/20 group cursor-pointer" onclick="DashboardSPA.openSection('payments')">
+                        <div class="relative z-10">
+                            <h3 class="text-4xl font-black mb-1" id="stat-balance">REF 1.2k</h3>
+                            <p class="text-green-100 text-sm font-medium">Disponible</p>
+                        </div>
+                        <i class="fas fa-money-bill-wave absolute -bottom-6 -right-6 text-[8rem] text-white/10 group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <i class="fas fa-money-bill-wave absolute -bottom-6 -right-6 text-[8rem] text-white/10 group-hover:scale-110 transition-transform"></i>
+
+                    <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="DashboardSPA.openSection('contracts')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-code"></i></div>
+                            <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded-lg">En curso</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="stat-contracts">2</h3>
+                        <p class="text-gray-500 text-xs mt-1">Proyectos Activos</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="DashboardSPA.openSection('proposals')">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 text-purple-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white" id="stat-proposals">5</h3>
+                        <p class="text-gray-500 text-xs mt-1">Propuestas Enviadas</p>
+                    </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="window.location.href='contracts.html'">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 text-primary rounded-xl flex items-center justify-center"><i class="fas fa-code"></i></div>
-                        <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded-lg">En curso</span>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">2</h3>
-                    <p class="text-gray-500 text-xs mt-1">Proyectos Activos</p>
-                </div>
-
-                <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-colors" onclick="window.location.href='proposals.html'">
-                     <div class="flex justify-between items-start mb-4">
-                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 text-purple-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">5</h3>
-                    <p class="text-gray-500 text-xs mt-1">Propuestas Enviadas</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-[2rem] border border-gray-200 dark:border-gray-800 p-8 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-lg">Entregas Pendientes</h3>
-                        <a href="contracts.html" class="text-primary text-sm font-bold hover:underline">Ir a Contratos</a>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="p-4 border border-gray-100 dark:border-gray-800 rounded-2xl">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold text-gray-400">E-commerce Repuestos</span>
-                                <span class="text-xs font-bold text-red-500">Vence mañana</span>
-                            </div>
-                            <h4 class="font-bold text-sm mb-3">Integración pasarela de pagos</h4>
-                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
-                                <div class="bg-primary h-2 rounded-full" style="width: 80%"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-[2rem] border border-gray-200 dark:border-gray-800 p-8 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-lg">Entregas Pendientes</h3>
+                            <button onclick="DashboardSPA.openSection('contracts')" class="text-primary text-sm font-bold hover:underline">Ir a Contratos</button>
+                        </div>
+                        
+                        <div class="space-y-4" id="pending-deliveries">
+                            <div class="p-4 border border-gray-100 dark:border-gray-800 rounded-2xl">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-xs font-bold text-gray-400">E-commerce Repuestos</span>
+                                    <span class="text-xs font-bold text-red-500">Vence mañana</span>
+                                </div>
+                                <h4 class="font-bold text-sm mb-3">Integración pasarela de pagos</h4>
+                                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 80%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-gray-900 dark:bg-gray-800 rounded-[2rem] p-8 text-white relative overflow-hidden">
-                    <div class="relative z-10">
-                        <h3 class="font-bold text-xl mb-4">Empezar</h3>
-                        <div class="space-y-3">
-                            <button onclick="window.location.href='search.html'" class="w-full bg-primary hover:bg-primary-dark py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
-                                <i class="fas fa-search"></i> Buscar Trabajo
-                            </button>
-                            <button onclick="window.location.href='profile.html'" class="w-full bg-white/10 hover:bg-white/20 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-user-edit"></i> Actualizar Perfil
-                            </button>
+                    <div class="bg-gray-900 dark:bg-gray-800 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h3 class="font-bold text-xl mb-4">Empezar</h3>
+                            <div class="space-y-3">
+                                <button onclick="DashboardSPA.openSection('search')" class="w-full bg-primary hover:bg-primary-dark py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+                                    <i class="fas fa-search"></i> Buscar Trabajo
+                                </button>
+                                <button onclick="DashboardSPA.openSection('profile')" class="w-full bg-white/10 hover:bg-white/20 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-user-edit"></i> Actualizar Perfil
+                                </button>
+                            </div>
                         </div>
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-green-500 blur-[60px] opacity-20"></div>
                     </div>
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500 blur-[60px] opacity-20"></div>
                 </div>
             </div>
+
+            <!-- Otros Secciones (placeholders) -->
+            <div id="section-search" class="section-content hidden"></div>
+            <div id="section-proposals" class="section-content hidden"></div>
+            <div id="section-contracts" class="section-content hidden"></div>
+            <div id="section-messages" class="section-content hidden"></div>
+            <div id="section-payments" class="section-content hidden"></div>
+            <div id="section-profile" class="section-content hidden"></div>
         </div>
     </main>
 
     <script src="js/devlink-utils.js"></script>
+    <script src="js/api-client.js"></script>
     <script>
+        // SPA Navigation System
+        const DashboardSPA = {
+            currentSection: 'home',
+            
+            openSection(section) {
+                // Hide all sections
+                document.querySelectorAll('.section-content').forEach(el => {
+                    el.classList.add('hidden');
+                });
+                
+                // Show selected section
+                const sectionEl = document.getElementById(`section-${section}`);
+                if (sectionEl) {
+                    sectionEl.classList.remove('hidden');
+                }
+                
+                // Update nav highlight
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active', 'bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/30');
+                    link.classList.add('text-gray-500', 'hover:text-primary', 'hover:bg-blue-50', 'dark:hover:bg-gray-800');
+                });
+                
+                const activeLink = document.querySelector(`[data-section="${section}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active', 'bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/30');
+                    activeLink.classList.remove('text-gray-500', 'hover:text-primary', 'hover:bg-blue-50', 'dark:hover:bg-gray-800');
+                }
+                
+                this.currentSection = section;
+                
+                // Load content for the section
+                this.loadSectionContent(section);
+            },
+            
+            loadSectionContent(section) {
+                const container = document.getElementById(`section-${section}`);
+                if (!container || container.innerHTML) return; // Already loaded
+                
+                switch(section) {
+                    case 'search':
+                        this.loadSearch(container);
+                        break;
+                    case 'proposals':
+                        this.loadProposals(container);
+                        break;
+                    case 'contracts':
+                        this.loadContracts(container);
+                        break;
+                    case 'messages':
+                        this.loadMessages(container);
+                        break;
+                    case 'payments':
+                        this.loadPayments(container);
+                        break;
+                    case 'profile':
+                        this.loadProfile(container);
+                        break;
+                }
+            },
+            
+            loadSearch(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando búsqueda de proyectos...</p></div>';
+            },
+            
+            loadProposals(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando mis propuestas...</p></div>';
+            },
+            
+            loadContracts(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando contratos...</p></div>';
+            },
+            
+            loadMessages(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando mensajes...</p></div>';
+            },
+            
+            loadPayments(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando información de pagos...</p></div>';
+            },
+            
+            loadProfile(container) {
+                container.innerHTML = '<div class="text-center py-12"><p>Cargando perfil...</p></div>';
+            }
+        };
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize sidebar navigation
             NavigationGenerator.initSidebar('dashboard_desarrollador');
